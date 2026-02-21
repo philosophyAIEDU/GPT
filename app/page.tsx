@@ -134,7 +134,10 @@ export default function Home() {
       });
 
       const dateKeywords = /(일정|날짜|원서접수|마감|전형요강|모집요강|언제)/;
-      if (dateKeywords.test(question) && !result.cautions.includes("해당 연도 전형요강을 반드시 확인하세요.")) {
+      if (
+        dateKeywords.test(question) &&
+        !result.cautions.includes("해당 연도 전형요강을 반드시 확인하세요.")
+      ) {
         result.cautions.push("해당 연도 전형요강을 반드시 확인하세요.");
       }
 
@@ -167,7 +170,9 @@ export default function Home() {
   };
 
   const updateBookmarkMemo = (id: string, memo: string) => {
-    setBookmarks((prev) => prev.map((item) => (item.id === id ? { ...item, memo } : item)));
+    setBookmarks((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, memo } : item)),
+    );
   };
 
   const removeBookmark = (id: string) => {
@@ -175,196 +180,246 @@ export default function Home() {
   };
 
   return (
-    <main className="mx-auto grid min-h-screen max-w-7xl gap-4 p-6 lg:grid-cols-[250px_1fr_380px]">
-      <aside className="rounded-xl border bg-white p-4 shadow-sm">
-        <h1 className="text-xl font-bold">입시 정보 허브</h1>
-        <p className="mt-2 text-sm text-slate-600">카테고리별 신뢰 출처를 먼저 확인해보세요.</p>
+    <main className="mx-auto min-h-screen w-full max-w-[1500px] px-4 py-8 md:px-8">
+      <header className="mb-6 rounded-3xl border border-slate-200 bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-500 p-6 text-white shadow-2xl shadow-blue-900/20">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-100">
+          Admissions Intelligence Platform
+        </p>
+        <h1 className="mt-2 text-2xl font-bold md:text-3xl">입시 정보 허브</h1>
+        <p className="mt-2 max-w-2xl text-sm text-blue-50 md:text-base">
+          신뢰 출처 기반 정보 큐레이션과 AI 요약 답변을 한 화면에서 관리하세요.
+        </p>
+      </header>
 
-        <div className="mt-4 space-y-2">
-          {categoryList.map((category) => (
-            <button
-              key={category}
-              type="button"
-              onClick={() => setSelectedCategory(category)}
-              className={`w-full rounded-md px-3 py-2 text-left text-sm ${
-                selectedCategory === category
-                  ? "bg-blue-600 text-white"
-                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-              }`}
-            >
-              {category}
-            </button>
-          ))}
-        </div>
-      </aside>
-
-      <section className="space-y-4">
-        <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
-          ⚠️ 공용 PC에서는 API Key 저장을 피하세요. 키는 서버 DB에 저장되지 않으며, 본인 기기에서만 사용하세요.
-        </div>
-
-        <div className="rounded-xl border bg-white p-4 shadow-sm">
-          <div className="flex flex-wrap items-end gap-2">
-            <div className="flex-1">
-              <label className="mb-1 block text-sm font-medium">Gemini API Key</label>
-              <input
-                type="password"
-                value={apiKeyInput}
-                onChange={(event) => setApiKeyInput(event.target.value)}
-                placeholder="AIza..."
-                className="w-full rounded-md border px-3 py-2"
-              />
-            </div>
-            <label className="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={sessionOnly}
-                onChange={(event) => setSessionOnly(event.target.checked)}
-              />
-              session-only
-            </label>
-            <button type="button" onClick={saveApiKey} className="rounded-md bg-blue-600 px-4 py-2 text-white">
-              저장
-            </button>
-            <button type="button" onClick={onTestApiKey} className="rounded-md bg-slate-700 px-4 py-2 text-white">
-              키 테스트
-            </button>
-            <button type="button" onClick={deleteApiKey} className="rounded-md bg-rose-600 px-4 py-2 text-white">
-              키 삭제/변경
-            </button>
-          </div>
-          <p className="mt-2 text-sm text-slate-600">
-            현재 키 상태: {activeApiKey ? "설정됨(마스킹 처리)" : "미설정"}
+      <div className="grid gap-5 lg:grid-cols-[280px_1fr_380px]">
+        <aside className="h-fit rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-lg backdrop-blur">
+          <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">
+            카테고리 네비게이션
           </p>
-          {keyStatus && <p className="mt-1 text-sm text-blue-700">{keyStatus}</p>}
-        </div>
-
-        <div className="rounded-xl border bg-white p-4 shadow-sm">
-          <h2 className="text-lg font-semibold">{selectedCategory} - 신뢰 출처 링크 모음</h2>
-          <ul className="mt-3 space-y-3">
-            {selectedSources.map((source) => (
-              <li key={`${source.title}-${source.url}`} className="rounded-md border p-3">
-                <p className="font-semibold">{source.title}</p>
-                <p className="text-sm text-slate-600">{source.organization}</p>
-                <p className="mt-1 text-sm">{source.description}</p>
-                <a
-                  href={source.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-1 inline-block text-sm text-blue-700 underline"
-                >
-                  {source.url}
-                </a>
-              </li>
+          <div className="mt-4 space-y-2">
+            {categoryList.map((category) => (
+              <button
+                key={category}
+                type="button"
+                onClick={() => setSelectedCategory(category)}
+                className={`w-full rounded-xl border px-3 py-2.5 text-left text-sm font-medium transition ${
+                  selectedCategory === category
+                    ? "border-transparent bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md"
+                    : "border-slate-200 bg-slate-50 text-slate-700 hover:border-blue-200 hover:bg-blue-50"
+                }`}
+              >
+                {category}
+              </button>
             ))}
-          </ul>
-        </div>
+          </div>
+        </aside>
 
-        <form onSubmit={submitQuestion} className="rounded-xl border bg-white p-4 shadow-sm">
-          <h2 className="text-lg font-semibold">질문하기 (요약/체크리스트/타임라인)</h2>
-          <textarea
-            value={question}
-            onChange={(event) => setQuestion(event.target.value)}
-            placeholder="예: 학생부종합전형 준비를 6개월 타임라인으로 정리해줘."
-            className="mt-2 h-28 w-full rounded-md border p-3"
-          />
-          <button
-            type="submit"
-            disabled={loading}
-            className="mt-2 rounded-md bg-emerald-600 px-4 py-2 text-white disabled:opacity-60"
-          >
-            {loading ? "생성 중..." : "Gemini로 답변 생성"}
-          </button>
-          {answerError && <p className="mt-2 text-sm text-rose-600">{answerError}</p>}
-        </form>
+        <section className="space-y-5">
+          <div className="rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 to-yellow-50 p-4 text-sm text-amber-900 shadow-sm">
+            ⚠️ 공용 PC에서는 API Key 저장을 피하세요. 키는 서버 DB에 저장되지 않으며,
+            본인 기기에서만 사용하세요.
+          </div>
 
-        {answer && (
-          <article className="space-y-3 rounded-xl border bg-white p-4 shadow-sm">
-            <h3 className="text-lg font-semibold">답변 결과</h3>
-            <p>
-              <span className="font-semibold">한줄 요약:</span> {answer.summary}
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-lg">
+            <div className="flex flex-wrap items-end gap-2">
+              <div className="min-w-[260px] flex-1">
+                <label className="mb-1.5 block text-sm font-semibold text-slate-700">
+                  Gemini API Key
+                </label>
+                <input
+                  type="password"
+                  value={apiKeyInput}
+                  onChange={(event) => setApiKeyInput(event.target.value)}
+                  placeholder="AIza..."
+                  className="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2.5 outline-none ring-blue-500 transition focus:border-blue-400 focus:ring"
+                />
+              </div>
+              <label className="flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700">
+                <input
+                  type="checkbox"
+                  checked={sessionOnly}
+                  onChange={(event) => setSessionOnly(event.target.checked)}
+                />
+                session-only
+              </label>
+              <button
+                type="button"
+                onClick={saveApiKey}
+                className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow hover:bg-blue-700"
+              >
+                저장
+              </button>
+              <button
+                type="button"
+                onClick={onTestApiKey}
+                className="rounded-xl bg-slate-700 px-4 py-2.5 text-sm font-semibold text-white shadow hover:bg-slate-800"
+              >
+                키 테스트
+              </button>
+              <button
+                type="button"
+                onClick={deleteApiKey}
+                className="rounded-xl bg-rose-600 px-4 py-2.5 text-sm font-semibold text-white shadow hover:bg-rose-700"
+              >
+                키 삭제/변경
+              </button>
+            </div>
+            <p className="mt-3 text-sm text-slate-600">
+              현재 키 상태: {activeApiKey ? "설정됨(마스킹 처리)" : "미설정"}
             </p>
-            <div>
-              <p className="font-semibold">핵심 포인트</p>
-              <ul className="list-disc pl-5">
-                {answer.key_points.slice(0, 5).map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <p className="font-semibold">체크리스트</p>
-              <ul className="list-disc pl-5">
-                {answer.checklist.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <p className="font-semibold">주의사항/오해하기 쉬운 점</p>
-              <ul className="list-disc pl-5">
-                {answer.cautions.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <p className="font-semibold">참고 링크</p>
-              <ul className="list-disc pl-5">
-                {answer.recommended_sources.slice(0, Math.max(3, answer.recommended_sources.length)).map((item) => (
-                  <li key={`${item.title}-${item.url}`}>
-                    <a className="text-blue-700 underline" href={item.url} target="_blank" rel="noreferrer">
-                      {item.title}
-                    </a>{" "}
-                    - {item.why}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="rounded-md bg-slate-50 p-3">
-              <label className="block text-sm font-semibold">개인 메모</label>
-              <textarea
-                value={memoDraft}
-                onChange={(event) => setMemoDraft(event.target.value)}
-                className="mt-1 h-20 w-full rounded-md border p-2"
-                placeholder="나만의 준비 메모를 남겨보세요"
-              />
-              <button
-                type="button"
-                onClick={addBookmark}
-                className="mt-2 rounded-md bg-indigo-600 px-4 py-2 text-white"
-              >
-                즐겨찾기 저장
-              </button>
-            </div>
-          </article>
-        )}
-      </section>
+            {keyStatus && <p className="mt-1 text-sm font-medium text-blue-700">{keyStatus}</p>}
+          </div>
 
-      <aside className="rounded-xl border bg-white p-4 shadow-sm">
-        <h2 className="text-lg font-semibold">즐겨찾기 / 메모</h2>
-        <div className="mt-3 space-y-3">
-          {bookmarks.length === 0 && <p className="text-sm text-slate-500">저장된 항목이 없습니다.</p>}
-          {bookmarks.map((item) => (
-            <div key={item.id} className="rounded-md border p-3">
-              <p className="text-sm font-semibold">Q. {item.question}</p>
-              <p className="mt-1 text-sm">요약: {item.answer.summary}</p>
-              <textarea
-                className="mt-2 h-20 w-full rounded-md border p-2 text-sm"
-                value={item.memo}
-                onChange={(event) => updateBookmarkMemo(item.id, event.target.value)}
-              />
-              <button
-                type="button"
-                onClick={() => removeBookmark(item.id)}
-                className="mt-2 rounded-md bg-rose-600 px-3 py-1 text-sm text-white"
-              >
-                삭제
-              </button>
-            </div>
-          ))}
-        </div>
-      </aside>
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-lg">
+            <h2 className="text-lg font-semibold text-slate-900">
+              {selectedCategory} · 신뢰 출처 링크
+            </h2>
+            <ul className="mt-3 grid gap-3 md:grid-cols-2">
+              {selectedSources.map((source) => (
+                <li
+                  key={`${source.title}-${source.url}`}
+                  className="rounded-xl border border-slate-200 bg-slate-50/60 p-3"
+                >
+                  <p className="font-semibold text-slate-900">{source.title}</p>
+                  <p className="text-sm text-slate-600">{source.organization}</p>
+                  <p className="mt-1 text-sm text-slate-700">{source.description}</p>
+                  <a
+                    href={source.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-2 inline-block text-sm font-medium text-blue-700 underline decoration-blue-300 underline-offset-2"
+                  >
+                    {source.url}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <form
+            onSubmit={submitQuestion}
+            className="rounded-2xl border border-slate-200 bg-white p-5 shadow-lg"
+          >
+            <h2 className="text-lg font-semibold text-slate-900">
+              질문하기 (요약/체크리스트/타임라인)
+            </h2>
+            <textarea
+              value={question}
+              onChange={(event) => setQuestion(event.target.value)}
+              placeholder="예: 학생부종합전형 준비를 6개월 타임라인으로 정리해줘."
+              className="mt-2 h-32 w-full rounded-xl border border-slate-300 bg-slate-50 p-3 outline-none ring-emerald-500 focus:border-emerald-400 focus:ring"
+            />
+            <button
+              type="submit"
+              disabled={loading}
+              className="mt-3 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow hover:bg-emerald-700 disabled:opacity-60"
+            >
+              {loading ? "생성 중..." : "Gemini로 답변 생성"}
+            </button>
+            {answerError && <p className="mt-2 text-sm font-medium text-rose-600">{answerError}</p>}
+          </form>
+
+          {answer && (
+            <article className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-lg">
+              <h3 className="text-lg font-semibold text-slate-900">답변 결과</h3>
+              <p className="rounded-lg bg-slate-50 p-3 text-slate-800">
+                <span className="font-semibold">한줄 요약:</span> {answer.summary}
+              </p>
+              <div>
+                <p className="font-semibold text-slate-900">핵심 포인트</p>
+                <ul className="list-disc space-y-1 pl-5 text-slate-700">
+                  {answer.key_points.slice(0, 5).map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <p className="font-semibold text-slate-900">체크리스트</p>
+                <ul className="list-disc space-y-1 pl-5 text-slate-700">
+                  {answer.checklist.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <p className="font-semibold text-slate-900">주의사항/오해하기 쉬운 점</p>
+                <ul className="list-disc space-y-1 pl-5 text-slate-700">
+                  {answer.cautions.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <p className="font-semibold text-slate-900">참고 링크</p>
+                <ul className="list-disc space-y-1 pl-5 text-slate-700">
+                  {answer.recommended_sources
+                    .slice(0, Math.max(3, answer.recommended_sources.length))
+                    .map((item) => (
+                      <li key={`${item.title}-${item.url}`}>
+                        <a
+                          className="text-blue-700 underline"
+                          href={item.url}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {item.title}
+                        </a>{" "}
+                        - {item.why}
+                      </li>
+                    ))}
+                </ul>
+              </div>
+              <div className="rounded-xl border border-indigo-100 bg-indigo-50/70 p-3">
+                <label className="block text-sm font-semibold text-indigo-900">
+                  개인 메모
+                </label>
+                <textarea
+                  value={memoDraft}
+                  onChange={(event) => setMemoDraft(event.target.value)}
+                  className="mt-1 h-20 w-full rounded-lg border border-indigo-200 bg-white p-2"
+                  placeholder="나만의 준비 메모를 남겨보세요"
+                />
+                <button
+                  type="button"
+                  onClick={addBookmark}
+                  className="mt-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
+                >
+                  즐겨찾기 저장
+                </button>
+              </div>
+            </article>
+          )}
+        </section>
+
+        <aside className="h-fit rounded-2xl border border-slate-200 bg-white p-4 shadow-lg">
+          <h2 className="text-lg font-semibold text-slate-900">즐겨찾기 / 메모</h2>
+          <div className="mt-3 space-y-3">
+            {bookmarks.length === 0 && (
+              <p className="text-sm text-slate-500">저장된 항목이 없습니다.</p>
+            )}
+            {bookmarks.map((item) => (
+              <div key={item.id} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                <p className="text-sm font-semibold text-slate-900">Q. {item.question}</p>
+                <p className="mt-1 text-sm text-slate-700">요약: {item.answer.summary}</p>
+                <textarea
+                  className="mt-2 h-20 w-full rounded-lg border border-slate-300 bg-white p-2 text-sm"
+                  value={item.memo}
+                  onChange={(event) =>
+                    updateBookmarkMemo(item.id, event.target.value)
+                  }
+                />
+                <button
+                  type="button"
+                  onClick={() => removeBookmark(item.id)}
+                  className="mt-2 rounded-lg bg-rose-600 px-3 py-1.5 text-sm text-white hover:bg-rose-700"
+                >
+                  삭제
+                </button>
+              </div>
+            ))}
+          </div>
+        </aside>
+      </div>
     </main>
   );
 }
